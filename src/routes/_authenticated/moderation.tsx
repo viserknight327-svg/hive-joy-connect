@@ -89,7 +89,7 @@ function Moderation() {
 
   const closeReport = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("reports").update({ status: "resolved" }).eq("id", id);
+      const { error } = await supabase.from("reports").update({ status: "dismissed" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["reports"] }),
