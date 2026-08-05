@@ -54,7 +54,7 @@ function Studio() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("appeals")
-        .select("id, video_id, status, reason, decision_note")
+        .select("id, video_id, status, message, decision_note")
         .eq("user_id", userId!);
       if (error) throw error;
       return data ?? [];
@@ -65,7 +65,7 @@ function Studio() {
     mutationFn: async (videoId: string) => {
       const { error } = await supabase
         .from("appeals")
-        .insert({ user_id: userId!, video_id: videoId, reason: appealText });
+        .insert({ user_id: userId!, video_id: videoId, message: appealText });
       if (error) throw error;
     },
     onSuccess: () => {
