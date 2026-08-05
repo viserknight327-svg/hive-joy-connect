@@ -143,3 +143,17 @@
     color: var(--color-foreground);
   }
 }
+
+@layer base {
+  body {
+    background-image:
+      radial-gradient(circle at 12% 8%, oklch(0.82 0.17 85 / 12%), transparent 45%),
+      radial-gradient(circle at 88% 92%, oklch(0.7 0.16 160 / 10%), transparent 45%);
+    background-attachment: fixed;
+  }
+}
+
+@utility honeycomb {
+  background-image: radial-gradient(oklch(0.82 0.17 85 / 10%) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
