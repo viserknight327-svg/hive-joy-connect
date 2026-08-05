@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Hive Mind Connect
+
+Yo listen carefully make a fully functional website named hive kind a social media for posting videos postive and moderated with AI but private u have karma points and add something u need add anything this is a commandAdd more features  and there is a problem i used git hub and vercel to deploy it shows me continue with Google isn't allowed then when I deploy with vercel it shows in availableGood continue add even more to be like tiktok by og and positiveAdd reporting, block/mute, and an AI appeal flow so I can keep the community positive while contesting holds.Add video reactions like duets/stitches (positive-only) so I can respond to other creators’ clips.Implement follow and unfollow so I can curate my For You feed with creators I like. And add chat plus also Og features then when I try to deploy with vercel it has an issue fixAdd video reactions like duets/stitches (positive-only) so I can respond to other creators’ clips.Implement follow and unfollow so I can curate my For You feed with creators I like.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://hive-joy-connect.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ab3ee396-07c0-45c8-b4e7-6d4a93bb203e).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
