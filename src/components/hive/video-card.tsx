@@ -41,11 +41,17 @@ export function VideoCard({ item }: { item: FeedItem }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comments")
-        .select("id, body, created_at, user_id, profiles:user_id(username)")
+        .select("id, body, created_at, user_id")
         .eq("video_id", item.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as Array<{ id: string; body: string; user_id: string; profiles: { username: string } | null }>;
+      const rows = data ?? [];
+      const ids = Array.from(new Set(rows.map((r) => r.user_id)));
+      const { data: authors } = ids.length
+        ? await supabase.from("profiles").select("id, username").in("id", ids)
+        : { data: [] as Array<{ id: string; username: string }> };
+      const nameById = new Map((authors ?? []).map((a) => [a.id, a.username]));
+      return rows.map((r) => ({ ...r, username: nameById.get(r.user_id) ?? "bee" }));
     },
   });
 
