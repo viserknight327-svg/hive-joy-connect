@@ -9,16 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-type UploadSearch = { parent?: string; kind?: "original" | "duet" | "stitch" };
+type UploadSearch = { parent?: string | undefined; kind?: "original" | "duet" | "stitch" | undefined };
 
 export const Route = createFileRoute("/_authenticated/upload")({
-  validateSearch: (search: Record<string, unknown>): UploadSearch => ({
-    parent: typeof search.parent === "string" ? search.parent : undefined,
-    kind:
-      search.kind === "duet" || search.kind === "stitch" || search.kind === "original"
-        ? search.kind
-        : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): UploadSearch => {
+    const rawKind = search["kind"];
+    const rawParent = search["parent"];
+    return {
+      parent: typeof rawParent === "string" ? rawParent : undefined,
+      kind: rawKind === "duet" || rawKind === "stitch" || rawKind === "original" ? rawKind : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Post a clip · Hive" },
