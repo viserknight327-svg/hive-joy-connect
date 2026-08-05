@@ -248,7 +248,7 @@ export function VideoCard({ item }: { item: FeedItem }) {
               <div className="max-h-64 space-y-2 overflow-y-auto">
                 {(comments ?? []).map((c) => (
                   <div key={c.id} className="rounded-xl bg-secondary/60 px-3 py-2 text-sm">
-                    <span className="font-semibold">@{c.profiles?.username ?? "bee"}</span> {c.body}
+                    <span className="font-semibold">@{c.username}</span> {c.body}
                   </div>
                 ))}
                 {comments?.length === 0 && <p className="text-sm text-muted-foreground">Be the first to cheer.</p>}
