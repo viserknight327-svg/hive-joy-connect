@@ -32,6 +32,7 @@ function Landing() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [busy, setBusy] = useState(false);
 
