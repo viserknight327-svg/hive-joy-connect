@@ -53,7 +53,10 @@ function Landing() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: username.trim() ? { username: username.trim() } : undefined,
+          },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your hive account.");
@@ -68,15 +71,20 @@ function Landing() {
     }
   }
 
-  async function withGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed. Try email instead.");
+  async function forgotPassword() {
+    if (!email) {
+      toast.error("Enter your email first, then tap reset.");
       return;
     }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Password reset link sent — check your inbox.");
   }
+
 
   return (
     <div className="honeycomb min-h-screen">
