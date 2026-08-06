@@ -55,7 +55,7 @@ function Landing() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: username.trim() ? { username: username.trim() } : undefined,
+            ...(username.trim() ? { data: { username: username.trim() } } : {}),
           },
         });
         if (error) throw error;
