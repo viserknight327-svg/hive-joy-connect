@@ -3,7 +3,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +32,7 @@ function Landing() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [busy, setBusy] = useState(false);
 
@@ -53,7 +53,10 @@ function Landing() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            ...(username.trim() ? { data: { username: username.trim() } } : {}),
+          },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your hive account.");
@@ -68,15 +71,20 @@ function Landing() {
     }
   }
 
-  async function withGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed. Try email instead.");
+  async function forgotPassword() {
+    if (!email) {
+      toast.error("Enter your email first, then tap reset.");
       return;
     }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Password reset link sent — check your inbox.");
   }
+
 
   return (
     <div className="honeycomb min-h-screen">
@@ -103,22 +111,53 @@ function Landing() {
 
         <div className="rounded-3xl border border-border/60 bg-card/90 p-6 shadow-2xl backdrop-blur">
           <h2 className="text-lg font-bold">{mode === "signin" ? "Enter the hive" : "Join the hive"}</h2>
-          <Button className="mt-4 w-full" variant="secondary" onClick={withGoogle}>
-            Continue with Google
-          </Button>
-          <div className="my-4 text-center text-xs text-muted-foreground">or use email</div>
-          <div className="space-y-3">
+          <p className="mt-1 text-xs text-muted-foreground">
+            {mode === "signin"
+              ? "Sign in with your email and password."
+              : "Pick a handle — it becomes your hive name."}
+          </p>
+          <div className="mt-4 space-y-3">
+            {mode === "signup" && (
+              <div>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  autoComplete="username"
+                  placeholder="honeybee"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+            )}
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input
+                id="password"
+                type="password"
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && email && password && !busy) void withEmail();
+                }}
+              />
             </div>
             <Button className="w-full" disabled={busy || !email || !password} onClick={withEmail}>
               {mode === "signin" ? "Sign in" : "Create account"}
             </Button>
+            {mode === "signin" && (
+              <button
+                className="w-full text-center text-xs text-muted-foreground underline"
+                disabled={busy}
+                onClick={forgotPassword}
+              >
+                Forgot your password?
+              </button>
+            )}
             <button
               className="w-full text-center text-xs text-muted-foreground underline"
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
@@ -126,6 +165,7 @@ function Landing() {
               {mode === "signin" ? "New here? Create an account" : "Already a bee? Sign in"}
             </button>
           </div>
+
         </div>
       </div>
     </div>
