@@ -70,6 +70,48 @@ export type Database = {
         }
         Relationships: []
       }
+      challenge_entries: {
+        Row: {
+          challenge_id: string
+          created_at: string
+          id: string
+          note: string
+          user_id: string
+          video_id: string | null
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string
+          id?: string
+          note?: string
+          user_id: string
+          video_id?: string | null
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          user_id?: string
+          video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_entries_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "daily_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_entries_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           body: string
@@ -101,6 +143,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      daily_challenges: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          prompt: string
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          prompt: string
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          prompt?: string
+          tag?: string
+        }
+        Relationships: []
       }
       follows: {
         Row: {
@@ -173,32 +239,47 @@ export type Database = {
       }
       profiles: {
         Row: {
+          about: string
+          accent: string
           avatar_url: string | null
+          banner_url: string | null
           bio: string
           created_at: string
           display_name: string
           id: string
           karma: number
+          link_url: string | null
+          pinned_video_id: string | null
           updated_at: string
           username: string
         }
         Insert: {
+          about?: string
+          accent?: string
           avatar_url?: string | null
+          banner_url?: string | null
           bio?: string
           created_at?: string
           display_name?: string
           id: string
           karma?: number
+          link_url?: string | null
+          pinned_video_id?: string | null
           updated_at?: string
           username: string
         }
         Update: {
+          about?: string
+          accent?: string
           avatar_url?: string | null
+          banner_url?: string | null
           bio?: string
           created_at?: string
           display_name?: string
           id?: string
           karma?: number
+          link_url?: string | null
+          pinned_video_id?: string | null
           updated_at?: string
           username?: string
         }
@@ -244,6 +325,59 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saves: {
+        Row: {
+          created_at: string
+          folder: string
+          id: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          folder?: string
+          id?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          folder?: string
+          id?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saves_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          code: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
