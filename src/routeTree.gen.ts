@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
@@ -33,6 +34,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedChallengesRoute = AuthenticatedChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
   id: '/chat',
@@ -73,6 +79,7 @@ const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/challenges': typeof AuthenticatedChallengesRoute
   '/chat': typeof AuthenticatedChatRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/challenges': typeof AuthenticatedChallengesRoute
   '/chat': typeof AuthenticatedChatRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/reset-password'
+    | '/challenges'
     | '/chat'
     | '/explore'
     | '/feed'
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/reset-password'
+    | '/challenges'
     | '/chat'
     | '/explore'
     | '/feed'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/reset-password'
+    | '/_authenticated/challenges'
     | '/_authenticated/chat'
     | '/_authenticated/explore'
     | '/_authenticated/feed'
@@ -170,6 +182,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/challenges': {
+      id: '/_authenticated/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof AuthenticatedChallengesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/chat': {
       id: '/_authenticated/chat'
@@ -224,6 +243,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedChallengesRoute: typeof AuthenticatedChallengesRoute
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
@@ -234,6 +254,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedChallengesRoute: AuthenticatedChallengesRoute,
   AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
