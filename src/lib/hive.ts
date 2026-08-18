@@ -7,10 +7,23 @@ export type Profile = {
   username: string;
   display_name: string;
   avatar_url: string | null;
+  banner_url: string | null;
   bio: string;
+  about: string;
+  link_url: string | null;
+  accent: string;
+  pinned_video_id: string | null;
   karma: number;
   created_at: string;
 };
+
+export const ACCENT_RING: Record<string, string> = {
+  honey: "from-amber-400/40 to-amber-200/5",
+  meadow: "from-emerald-400/40 to-emerald-200/5",
+  berry: "from-fuchsia-400/40 to-fuchsia-200/5",
+  sky: "from-sky-400/40 to-sky-200/5",
+};
+
 
 export type VideoRow = {
   id: string;

@@ -157,3 +157,42 @@
   background-image: radial-gradient(oklch(0.82 0.17 85 / 10%) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
+/* --- 3D depth system --- */
+@utility card-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  background-image: linear-gradient(160deg, oklch(1 0 0 / 7%), transparent 42%);
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 12%) inset,
+    0 -1px 0 0 oklch(0 0 0 / 25%) inset,
+    0 18px 40px -18px oklch(0 0 0 / 70%),
+    0 2px 8px -4px oklch(0 0 0 / 45%);
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s ease;
+}
+
+@utility card-3d-hover {
+  &:hover {
+    transform: translateY(-3px) rotateX(1.4deg);
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 16%) inset,
+      0 26px 60px -20px oklch(0 0 0 / 78%),
+      0 0 0 1px oklch(0.82 0.17 85 / 22%);
+  }
+}
+
+@utility scene-3d {
+  perspective: 1200px;
+}
+
+@utility raised {
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 14%) inset,
+    0 8px 18px -10px oklch(0 0 0 / 70%);
+}
+
+@utility glow-primary {
+  box-shadow: 0 0 0 1px oklch(0.82 0.17 85 / 30%), 0 12px 32px -12px oklch(0.82 0.17 85 / 45%);
+}

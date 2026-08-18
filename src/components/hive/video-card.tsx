@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Heart, MessageSquare, Flag, Repeat2, Scissors, Eye, UserPlus, UserMinus, Ban } from "lucide-react";
+import { Heart, MessageSquare, Flag, Repeat2, Scissors, Eye, UserPlus, UserMinus, Ban, Bookmark, Trash2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSignedUrl, useSessionUser, type VideoRow, type Profile } from "@/lib/hive";
@@ -70,6 +70,69 @@ export function VideoCard({ item }: { item: FeedItem }) {
   });
 
   const liked = !!likes?.some((l) => l.user_id === userId);
+
+  const { data: saved } = useQuery({
+    queryKey: ["saved", userId, item.id],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("saves")
+        .select("id")
+        .eq("user_id", userId!)
+        .eq("video_id", item.id)
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
+  const toggleSave = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("Sign in first");
+      if (saved) {
+        const { error } = await supabase.from("saves").delete().eq("user_id", userId).eq("video_id", item.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("saves").insert({ user_id: userId, video_id: item.id });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["saved"] });
+      qc.invalidateQueries({ queryKey: ["my-saves"] });
+      toast.success(saved ? "Removed from your collection" : "Saved to your collection 🔖");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removeVideo = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("Sign in first");
+      const { error } = await supabase.from("videos").delete().eq("id", item.id);
+      if (error) throw error;
+      if (item.video_url) await supabase.storage.from("videos").remove([item.video_url]);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["feed"] });
+      qc.invalidateQueries({ queryKey: ["profile-videos"] });
+      qc.invalidateQueries({ queryKey: ["my-clips"] });
+      qc.invalidateQueries({ queryKey: ["my-approved-clips"] });
+      toast.success("Clip removed.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const share = async () => {
+    const link = `${window.location.origin}/feed?v=${item.id}`;
+    try {
+      if (navigator.share) await navigator.share({ title: "Hive clip", text: item.caption, url: link });
+      else {
+        await navigator.clipboard.writeText(link);
+        toast.success("Link copied 🔗");
+      }
+    } catch {
+      /* user dismissed */
+    }
+  };
 
   const toggleLike = useMutation({
     mutationFn: async () => {
@@ -158,7 +221,7 @@ export function VideoCard({ item }: { item: FeedItem }) {
   });
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-lg">
+    <article className="card-3d card-3d-hover overflow-hidden rounded-3xl border border-border/60 bg-card">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="grid size-10 place-items-center rounded-full bg-primary/15 text-lg">🐝</div>
@@ -229,6 +292,12 @@ export function VideoCard({ item }: { item: FeedItem }) {
               <Scissors className="mr-1 size-4" /> Stitch
             </Link>
           </Button>
+          <Button size="sm" variant={saved ? "default" : "secondary"} onClick={() => toggleSave.mutate()}>
+            <Bookmark className={saved ? "mr-1 size-4 fill-current" : "mr-1 size-4"} /> {saved ? "Saved" : "Save"}
+          </Button>
+          <Button size="sm" variant="secondary" onClick={share}>
+            <Share2 className="mr-1 size-4" /> Share
+          </Button>
           <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
             <Eye className="size-4" /> {item.view_count}
           </span>
@@ -292,6 +361,31 @@ export function VideoCard({ item }: { item: FeedItem }) {
             <Button size="sm" variant="ghost" onClick={() => block.mutate()}>
               <Ban className="mr-1 size-4" /> Block
             </Button>
+          )}
+
+          {userId === item.user_id && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                  <Trash2 className="mr-1 size-4" /> Delete
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Remove this clip?</DialogTitle>
+                </DialogHeader>
+                <p className="text-sm text-muted-foreground">
+                  This permanently deletes the video, its likes and comments. This can't be undone.
+                </p>
+                <Button
+                  variant="destructive"
+                  disabled={removeVideo.isPending}
+                  onClick={() => removeVideo.mutate()}
+                >
+                  {removeVideo.isPending ? "Removing…" : "Yes, remove it"}
+                </Button>
+              </DialogContent>
+            </Dialog>
           )}
         </div>
       </div>
