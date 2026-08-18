@@ -7,5 +7,12 @@
   "background_color": "#211f1b",
   "theme_color": "#f4c95d",
   "orientation": "portrait-primary",
-  "icons": [{ "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }]
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

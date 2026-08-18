@@ -8,6 +8,10 @@ Hive now uses `/auth/callback` for email confirmation, password recovery, and OA
 
 The repository includes Capacitor wrappers for Android and iOS. Run `npm run mobile:sync` or `npm run mobile:sync:ios` to rebuild and synchronize the web app. A debug APK can be produced with `cd android && ./gradlew assembleDebug`; an unsigned release APK can be produced with `./gradlew assembleRelease`. The iOS project is in `ios/` and the cloud workflow is `codemagic.yaml`. Connect the repository to Codemagic, add your Apple Developer signing credentials there, then run the `hive-ios` workflow or push a tag such as `ios-v1.0.0`; it builds a signed IPA suitable for TestFlight. This avoids needing a local Mac while still using Apple’s Xcode toolchain in the cloud. The wrappers point at the deployed Hive URL configured in `capacitor.config.ts`, keeping the native shells aligned with the server-rendered app.
 
+### iPhone without Apple Developer access
+
+You can use Hive on iPhone immediately without an Apple Developer account. Open `https://hivemind20.vercel.app` in Safari, sign in, tap the **Share** button, choose **Add to Home Screen**, rename it to **Hive**, and tap **Add**. Hive now includes iOS PWA metadata, an Apple touch icon, and a standalone app-style launch path.
+
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
