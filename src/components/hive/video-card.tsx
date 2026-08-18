@@ -1,7 +1,20 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Heart, MessageSquare, Flag, Repeat2, Scissors, Eye, UserPlus, UserMinus, Ban, Bookmark, Trash2, Share2 } from "lucide-react";
+import {
+  Heart,
+  MessageSquare,
+  Flag,
+  Repeat2,
+  Scissors,
+  Eye,
+  UserPlus,
+  UserMinus,
+  Ban,
+  Bookmark,
+  Trash2,
+  Share2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSignedUrl, useSessionUser, type VideoRow, type Profile } from "@/lib/hive";
@@ -30,7 +43,10 @@ export function VideoCard({ item }: { item: FeedItem }) {
   const { data: likes } = useQuery({
     queryKey: ["likes", item.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("video_likes").select("user_id").eq("video_id", item.id);
+      const { data, error } = await supabase
+        .from("video_likes")
+        .select("user_id")
+        .eq("video_id", item.id);
       if (error) throw error;
       return data ?? [];
     },
@@ -89,10 +105,16 @@ export function VideoCard({ item }: { item: FeedItem }) {
     mutationFn: async () => {
       if (!userId) throw new Error("Sign in first");
       if (saved) {
-        const { error } = await supabase.from("saves").delete().eq("user_id", userId).eq("video_id", item.id);
+        const { error } = await supabase
+          .from("saves")
+          .delete()
+          .eq("user_id", userId)
+          .eq("video_id", item.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("saves").insert({ user_id: userId, video_id: item.id });
+        const { error } = await supabase
+          .from("saves")
+          .insert({ user_id: userId, video_id: item.id });
         if (error) throw error;
       }
     },
@@ -123,11 +145,17 @@ export function VideoCard({ item }: { item: FeedItem }) {
 
   const share = async () => {
     const link = `${window.location.origin}/feed?v=${item.id}`;
+    const shareData = { title: "A good-energy clip from Hive", text: item.caption, url: link };
     try {
-      if (navigator.share) await navigator.share({ title: "Hive clip", text: item.caption, url: link });
-      else {
+      if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+        await navigator.share(shareData);
+        return;
+      }
+      if (navigator.clipboard) {
         await navigator.clipboard.writeText(link);
-        toast.success("Link copied 🔗");
+        toast.success("Hive link copied — share the good energy.");
+      } else {
+        window.prompt("Copy this Hive link", link);
       }
     } catch {
       /* user dismissed */
@@ -138,10 +166,16 @@ export function VideoCard({ item }: { item: FeedItem }) {
     mutationFn: async () => {
       if (!userId) throw new Error("Sign in first");
       if (liked) {
-        const { error } = await supabase.from("video_likes").delete().eq("video_id", item.id).eq("user_id", userId);
+        const { error } = await supabase
+          .from("video_likes")
+          .delete()
+          .eq("video_id", item.id)
+          .eq("user_id", userId);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("video_likes").insert({ video_id: item.id, user_id: userId });
+        const { error } = await supabase
+          .from("video_likes")
+          .insert({ video_id: item.id, user_id: userId });
         if (error) throw error;
       }
     },
@@ -163,7 +197,9 @@ export function VideoCard({ item }: { item: FeedItem }) {
           .eq("following_id", item.user_id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("follows").insert({ follower_id: userId, following_id: item.user_id });
+        const { error } = await supabase
+          .from("follows")
+          .insert({ follower_id: userId, following_id: item.user_id });
         if (error) throw error;
       }
     },
@@ -178,7 +214,8 @@ export function VideoCard({ item }: { item: FeedItem }) {
   const addComment = useMutation({
     mutationFn: async () => {
       const res = await postComment({ data: { videoId: item.id, body: commentText } });
-      if (!res.ok) throw new Error(res.reason || "That comment isn't positive enough for the hive.");
+      if (!res.ok)
+        throw new Error(res.reason || "That comment isn't positive enough for the hive.");
     },
     onSuccess: () => {
       setCommentText("");
@@ -191,7 +228,9 @@ export function VideoCard({ item }: { item: FeedItem }) {
   const block = useMutation({
     mutationFn: async () => {
       if (!userId) throw new Error("Sign in first");
-      const { error } = await supabase.from("blocks").insert({ blocker_id: userId, blocked_id: item.user_id });
+      const { error } = await supabase
+        .from("blocks")
+        .insert({ blocker_id: userId, blocked_id: item.user_id });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -224,7 +263,9 @@ export function VideoCard({ item }: { item: FeedItem }) {
     <article className="card-3d card-3d-hover overflow-hidden rounded-3xl border border-border/60 bg-card">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="grid size-10 place-items-center rounded-full bg-primary/15 text-lg">🐝</div>
+          <div className="grid size-10 place-items-center rounded-full bg-primary/15 text-lg">
+            🐝
+          </div>
           <div>
             <Link
               to="/u/$username"
@@ -244,8 +285,16 @@ export function VideoCard({ item }: { item: FeedItem }) {
           </div>
         </div>
         {userId !== item.user_id && (
-          <Button size="sm" variant={following ? "secondary" : "default"} onClick={() => toggleFollow.mutate()}>
-            {following ? <UserMinus className="mr-1 size-4" /> : <UserPlus className="mr-1 size-4" />}
+          <Button
+            size="sm"
+            variant={following ? "secondary" : "default"}
+            onClick={() => toggleFollow.mutate()}
+          >
+            {following ? (
+              <UserMinus className="mr-1 size-4" />
+            ) : (
+              <UserPlus className="mr-1 size-4" />
+            )}
             {following ? "Following" : "Follow"}
           </Button>
         )}
@@ -262,7 +311,9 @@ export function VideoCard({ item }: { item: FeedItem }) {
             onPlay={() => supabase.rpc("increment_views", { _video_id: item.id })}
           />
         ) : (
-          <div className="grid h-64 place-items-center text-sm text-muted-foreground">Loading clip…</div>
+          <div className="grid h-64 place-items-center text-sm text-muted-foreground">
+            Loading clip…
+          </div>
         )}
       </div>
 
@@ -271,7 +322,10 @@ export function VideoCard({ item }: { item: FeedItem }) {
         {item.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {item.tags.map((t) => (
-              <span key={t} className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
+              <span
+                key={t}
+                className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground"
+              >
                 #{t}
               </span>
             ))}
@@ -279,8 +333,13 @@ export function VideoCard({ item }: { item: FeedItem }) {
         )}
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button size="sm" variant={liked ? "default" : "secondary"} onClick={() => toggleLike.mutate()}>
-            <Heart className={liked ? "mr-1 size-4 fill-current" : "mr-1 size-4"} /> {likes?.length ?? 0}
+          <Button
+            size="sm"
+            variant={liked ? "default" : "secondary"}
+            onClick={() => toggleLike.mutate()}
+          >
+            <Heart className={liked ? "mr-1 size-4 fill-current" : "mr-1 size-4"} />{" "}
+            {likes?.length ?? 0}
           </Button>
           <Button size="sm" variant="secondary" asChild>
             <Link to="/upload" search={{ parent: item.id, kind: "duet" }}>
@@ -292,8 +351,13 @@ export function VideoCard({ item }: { item: FeedItem }) {
               <Scissors className="mr-1 size-4" /> Stitch
             </Link>
           </Button>
-          <Button size="sm" variant={saved ? "default" : "secondary"} onClick={() => toggleSave.mutate()}>
-            <Bookmark className={saved ? "mr-1 size-4 fill-current" : "mr-1 size-4"} /> {saved ? "Saved" : "Save"}
+          <Button
+            size="sm"
+            variant={saved ? "default" : "secondary"}
+            onClick={() => toggleSave.mutate()}
+          >
+            <Bookmark className={saved ? "mr-1 size-4 fill-current" : "mr-1 size-4"} />{" "}
+            {saved ? "Saved" : "Save"}
           </Button>
           <Button size="sm" variant="secondary" onClick={share}>
             <Share2 className="mr-1 size-4" /> Share
@@ -320,7 +384,9 @@ export function VideoCard({ item }: { item: FeedItem }) {
                     <span className="font-semibold">@{c.username}</span> {c.body}
                   </div>
                 ))}
-                {comments?.length === 0 && <p className="text-sm text-muted-foreground">Be the first to cheer.</p>}
+                {comments?.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Be the first to cheer.</p>
+                )}
               </div>
               <Textarea
                 value={commentText}
@@ -328,7 +394,10 @@ export function VideoCard({ item }: { item: FeedItem }) {
                 maxLength={400}
                 placeholder="Say something uplifting…"
               />
-              <Button disabled={!commentText.trim() || addComment.isPending} onClick={() => addComment.mutate()}>
+              <Button
+                disabled={!commentText.trim() || addComment.isPending}
+                onClick={() => addComment.mutate()}
+              >
                 {addComment.isPending ? "Checking positivity…" : "Post comment"}
               </Button>
             </DialogContent>
@@ -344,7 +413,11 @@ export function VideoCard({ item }: { item: FeedItem }) {
               <DialogHeader>
                 <DialogTitle>Report this clip</DialogTitle>
               </DialogHeader>
-              <Input value={reportReason} onChange={(e) => setReportReason(e.target.value)} maxLength={100} />
+              <Input
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                maxLength={100}
+              />
               <Textarea
                 value={reportDetails}
                 onChange={(e) => setReportDetails(e.target.value)}
@@ -366,7 +439,11 @@ export function VideoCard({ item }: { item: FeedItem }) {
           {userId === item.user_id && (
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-destructive hover:text-destructive"
+                >
                   <Trash2 className="mr-1 size-4" /> Delete
                 </Button>
               </DialogTrigger>

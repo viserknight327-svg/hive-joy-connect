@@ -1,0 +1,11 @@
+{
+  "name": "Hive — Good energy only",
+  "short_name": "Hive",
+  "description": "A private, AI-moderated short-video community built for good energy.",
+  "start_url": "/feed",
+  "display": "standalone",
+  "background_color": "#211f1b",
+  "theme_color": "#f4c95d",
+  "orientation": "portrait-primary",
+  "icons": [{ "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }]
+}
