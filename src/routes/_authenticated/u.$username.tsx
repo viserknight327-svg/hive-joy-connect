@@ -141,7 +141,7 @@ function ProfilePage() {
   const pinned = clips.find((v) => v.id === profile.pinned_video_id);
   const rest = clips.filter((v) => v.id !== profile.pinned_video_id);
   const totalViews = clips.reduce((sum, v) => sum + (v.view_count ?? 0), 0);
-  const accent = ACCENT_RING[profile.accent] ?? ACCENT_RING.honey;
+  const accent = ACCENT_RING[profile.accent] ?? ACCENT_RING["honey"];
 
   return (
     <div className="scene-3d space-y-6">
