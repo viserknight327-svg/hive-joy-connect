@@ -64,12 +64,18 @@ function ImageField({
         onChange={async (e) => {
           const file = e.target.files?.[0];
           if (!file || !userId) return;
-          if (file.size > 8 * 1024 * 1024) return toast.error("Keep images under 8MB.");
+          if (file.size > 8 * 1024 * 1024) {
+            toast.error("Keep images under 8MB.");
+            return;
+          }
           setBusy(true);
           const key = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]/g, "")}`;
           const { error } = await supabase.storage.from(bucket).upload(key, file, { upsert: true });
           setBusy(false);
-          if (error) return toast.error(error.message);
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
           onUpload(key);
         }}
       />
