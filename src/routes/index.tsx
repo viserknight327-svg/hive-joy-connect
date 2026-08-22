@@ -119,17 +119,19 @@ function Landing() {
               connections, and earn karma for making the feed better.
             </p>
             <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
-              {[
-                [HeartHandshake, "Kind by design"],
-                [LockKeyhole, "Private by default"],
-                [UsersRound, "Community first"],
-              ].map(([Icon, label]) => (
+              {(
+                [
+                  [HeartHandshake, "Kind by design"],
+                  [LockKeyhole, "Private by default"],
+                  [UsersRound, "Community first"],
+                ] as const
+              ).map(([Icon, label]) => (
                 <div
-                  key={label as string}
+                  key={label}
                   className="card-3d rounded-2xl border border-border/60 bg-card/70 p-4"
                 >
                   <Icon className="size-5 text-primary" />
-                  <div className="mt-3 text-sm font-bold">{label as string}</div>
+                  <div className="mt-3 text-sm font-bold">{label}</div>
                 </div>
               ))}
             </div>

@@ -79,11 +79,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Hive — The positive-only short video community" },
+      {
+        name: "description",
+        content:
+          "Hive is a private, AI-moderated short-video community where kind clips get seen and good energy earns karma.",
+      },
+      { name: "author", content: "Hive" },
+      { property: "og:site_name", content: "Hive" },
+      { property: "og:title", content: "Hive — Short videos, better energy" },
+      {
+        property: "og:description",
+        content:
+          "Share uplifting short videos in a private, AI-moderated community built for creators who keep it kind.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@HiveCommunity" },
