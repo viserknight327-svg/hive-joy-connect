@@ -5,18 +5,18 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 type CallbackSearch = {
-  next?: string;
-  code?: string;
-  error_description?: string;
+  next: string | undefined;
+  code: string | undefined;
+  error_description: string | undefined;
 };
 
 export const Route = createFileRoute("/auth/callback")({
   ssr: false,
   validateSearch: (search: Record<string, unknown>): CallbackSearch => ({
-    next: typeof search.next === "string" ? search.next : undefined,
-    code: typeof search.code === "string" ? search.code : undefined,
+    next: typeof search["next"] === "string" ? search["next"] : undefined,
+    code: typeof search["code"] === "string" ? search["code"] : undefined,
     error_description:
-      typeof search.error_description === "string" ? search.error_description : undefined,
+      typeof search["error_description"] === "string" ? search["error_description"] : undefined,
   }),
   head: () => ({
     meta: [
