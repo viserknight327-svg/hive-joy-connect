@@ -90,9 +90,13 @@ function Landing() {
       <div className="mx-auto max-w-6xl px-5 py-6 md:px-8 md:py-10">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="raised grid size-10 place-items-center rounded-2xl bg-primary text-xl text-primary-foreground">
-              H
-            </span>
+            <img
+              src={hiveLogo}
+              alt="Hive logo"
+              width={1024}
+              height={1024}
+              className="raised size-10 rounded-2xl bg-primary/10 p-1"
+            />
             <div>
               <div className="text-lg font-black tracking-tight">Hive</div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
